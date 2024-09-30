@@ -93,6 +93,7 @@ button:hover {
   display: flex;
   gap: 10px;
   margin-top: 15px;
+  flex-wrap: wrap; /* Para permitir mejor ajuste en dispositivos pequeños */
 }
 
 .user-actions button {
@@ -149,12 +150,12 @@ button:hover {
 }
 
 .admin-info {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 20px;
+  justify-content: space-between;
 }
 
 .admin-info p {
@@ -183,4 +184,45 @@ button:hover {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .admin-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .user-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  input, button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .user-item {
+    padding: 15px;
+  }
+
+  .logo {
+    max-width: 150px;
+  }
+
+  .logout-button {
+    padding: 8px;
+  }
 }
