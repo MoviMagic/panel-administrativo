@@ -99,16 +99,24 @@ async function listarUsuarios() {
   }
 }
 
-// Buscar usuarios según el texto ingresado
-document.getElementById('search-bar').addEventListener('input', listarUsuarios);
+// Función para editar usuario
+window.editarUsuario = async function (userId, currentUsername, currentEmail) {
+  const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
+  const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
 
-// Función para eliminar usuarios
-window.eliminarUsuario = async function (userId) {
-  try {
-    await deleteDoc(doc(db, 'users', userId));
-    listarUsuarios();
-  } catch (error) {
-    console.error("Error al eliminar usuario: ", error);
+  if (newUsername && newEmail) {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        username: newUsername,
+        email: newEmail
+      });
+      alert("Usuario actualizado exitosamente.");
+      listarUsuarios();
+    } catch (error) {
+      console.error("Error al actualizar usuario: ", error);
+      alert("Error al actualizar usuario: " + error.message);
+    }
   }
 };
 
@@ -134,26 +142,8 @@ window.renovarUsuario = async function (userId, months) {
   }
 };
 
-// Función para editar usuario
-window.editarUsuario = async function (userId, currentUsername, currentEmail) {
-  const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
-  const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
-
-  if (newUsername && newEmail) {
-    try {
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, {
-        username: newUsername,
-        email: newEmail
-      });
-      alert("Usuario actualizado exitosamente.");
-      listarUsuarios();
-    } catch (error) {
-      console.error("Error al actualizar usuario: ", error);
-      alert("Error al actualizar usuario: " + error.message);
-    }
-  }
-};
+// Buscar usuarios según el texto ingresado
+document.getElementById('search-bar').addEventListener('input', listarUsuarios);
 
 // Cerrar sesión del administrador
 document.getElementById('logout-btn').addEventListener('click', async () => {

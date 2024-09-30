@@ -1,6 +1,7 @@
+/* Estilo general inspirado en los colores de Disney+ */
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #f0f2f5;
+  background-color: #0C0E1F; /* Fondo principal */
   margin: 0;
   padding: 0;
   display: flex;
@@ -16,15 +17,16 @@ body {
   max-width: 800px;
   width: 100%;
   padding: 20px;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  background-color: #1F80E0; /* Fondo con color principal */
   border-radius: 12px;
   margin: 20px auto;
+  color: #FFFFFF; /* Texto en blanco */
 }
 
 h1, h2 {
   text-align: center;
-  color: #333;
+  color: #FFFFFF;
 }
 
 form {
@@ -42,47 +44,49 @@ input, button {
 }
 
 input {
-  background-color: #f0f2f5;
-  border: 1px solid #ddd;
+  background-color: #0C0E1F; /* Fondo para inputs */
+  color: #FFFFFF;
+  border: 1px solid #1A73E8;
 }
 
 button {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #1A73E8; /* Botones con color vibrante */
+  color: #FFFFFF;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #1F80E0;
 }
 
 #message {
   text-align: center;
-  color: green;
+  color: #4CAF50;
   margin-top: 15px;
 }
 
+/* Estilo de la lista de usuarios */
 #users-list {
   margin-top: 30px;
 }
 
 .user-item {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  background-color: #1A1C33;
+  border: 1px solid #1F80E0;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  color: #FFFFFF;
 }
 
 .user-item p {
   margin: 0;
-  color: #333;
 }
 
 .user-actions {
@@ -139,7 +143,9 @@ button:hover {
   padding: 10px;
   font-size: 1rem;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #1A73E8;
+  background-color: #0C0E1F;
+  color: #FFFFFF;
 }
 
 .admin-info {
@@ -153,7 +159,7 @@ button:hover {
 
 .admin-info p {
   margin: 0;
-  color: #333;
+  color: #FFFFFF;
   font-weight: bold;
 }
 
