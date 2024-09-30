@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "movimagic.appspot.com",
   messagingSenderId: "518388279864",
   appId: "1:518388279864:web:a6f699391ec5bb627c14cd",
-  measurementId: "G-GG65HJV2T6",
+  measurementId: "G-GG65HJV2T6"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -86,7 +86,7 @@ async function listarUsuarios() {
           <p><strong>Email:</strong> ${userData.email}</p>
           <p><strong>Fecha de Expiración:</strong> ${new Date(userData.expirationDate.seconds * 1000).toLocaleDateString()}</p>
           <div class="user-actions">
-            <button class="edit-btn" onclick="editarUsuario('${doc.id}')"><i class="fas fa-edit"></i> Editar</button>
+            <button class="edit-btn" onclick="editarUsuario('${doc.id}', '${userData.username}', '${userData.email}')"><i class="fas fa-edit"></i> Editar</button>
             <button class="delete-btn" onclick="eliminarUsuario('${doc.id}')"><i class="fas fa-trash"></i> Eliminar</button>
             <button class="renew-btn" onclick="renovarUsuario('${doc.id}', 1)"><i class="fas fa-sync-alt"></i> Renovar 1 mes</button>
           </div>
@@ -102,7 +102,7 @@ async function listarUsuarios() {
 // Buscar usuarios según el texto ingresado
 document.getElementById('search-bar').addEventListener('input', listarUsuarios);
 
-// Funciones para eliminar usuarios y cerrar sesión
+// Función para eliminar usuarios
 window.eliminarUsuario = async function (userId) {
   try {
     await deleteDoc(doc(db, 'users', userId));
@@ -112,6 +112,50 @@ window.eliminarUsuario = async function (userId) {
   }
 };
 
+// Función para renovar la cuenta del usuario
+window.renovarUsuario = async function (userId, months) {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      let currentExpiration = userData.expirationDate.toDate ? userData.expirationDate.toDate() : new Date(userData.expirationDate.seconds * 1000);
+      currentExpiration.setMonth(currentExpiration.getMonth() + months);
+      const newExpirationDate = currentExpiration;
+
+      await updateDoc(userRef, { expirationDate: newExpirationDate });
+
+      alert(`Usuario renovado exitosamente por ${months} mes(es).`);
+      listarUsuarios();
+    }
+  } catch (error) {
+    console.error("Error al renovar usuario: ", error);
+    alert("Error al renovar usuario: " + error.message);
+  }
+};
+
+// Función para editar usuario
+window.editarUsuario = async function (userId, currentUsername, currentEmail) {
+  const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
+  const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
+
+  if (newUsername && newEmail) {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        username: newUsername,
+        email: newEmail
+      });
+      alert("Usuario actualizado exitosamente.");
+      listarUsuarios();
+    } catch (error) {
+      console.error("Error al actualizar usuario: ", error);
+      alert("Error al actualizar usuario: " + error.message);
+    }
+  }
+};
+
+// Cerrar sesión del administrador
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await signOut(auth);
   location.reload();
