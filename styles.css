@@ -186,7 +186,7 @@ button:hover {
   margin-right: auto;
 }
 
-/* Responsive Styles */
+/* Estilos responsivos para dispositivos móviles */
 @media (max-width: 768px) {
   .container {
     padding: 15px;
@@ -224,5 +224,13 @@ button:hover {
 
   .logout-button {
     padding: 8px;
+  }
+
+  h1, h2 {
+    font-size: 1.5rem;
+  }
+
+  input, button {
+    font-size: 1rem;
   }
 }
