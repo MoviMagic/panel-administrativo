@@ -1,9 +1,25 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Inicializar Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+// Asegúrate de que el archivo tenga la declaración de módulo
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+// Inicializar Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDhPRVu8n_pZQzJPVWNFlJonmj5KEYsF10",
+  authDomain: "movimagic.firebaseapp.com",
+  projectId: "movimagic",
+  storageBucket: "movimagic.appspot.com",
+  messagingSenderId: "518388279864",
+  appId: "1:518388279864:web:a6f699391ec5bb627c14cd",
+  measurementId: "G-GG65HJV2T6"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Esperar hasta que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', () => {
   let currentAdminId = null;
   let currentAdminEmail = null;
 
@@ -19,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentAdminEmail = userCredential.user.email;
 
       document.getElementById('login-modal').style.display = 'none';
-      document.getElementById('main-panel').style.display = 'block';
+      document.getElementById('main-panel').style.display = 'block'; // Asegúrate de que el id sea correcto
       document.getElementById('admin-email-display').innerText = `Administrador: ${currentAdminEmail}`;
       listarUsuarios();
     } catch (error) {
@@ -86,67 +102,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Función para editar usuario
-  window.editarUsuario = async function (userId, currentUsername, currentEmail) {
-    const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
-    const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
-
-    if (newUsername && newEmail) {
-      try {
-        const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, {
-          username: newUsername,
-          email: newEmail
-        });
-        alert("Usuario actualizado exitosamente.");
-        listarUsuarios();
-      } catch (error) {
-        console.error("Error al actualizar usuario: ", error);
-        alert("Error al actualizar usuario: " + error.message);
-      }
-    }
-  };
-
-  // Función para eliminar usuarios
-  window.eliminarUsuario = async function (userId) {
-    try {
-      await deleteDoc(doc(db, 'users', userId));
-      alert("Usuario eliminado exitosamente.");
-      listarUsuarios(); // Actualizar la lista de usuarios después de la eliminación
-    } catch (error) {
-      console.error("Error al eliminar usuario: ", error);
-      alert("Error al eliminar usuario: " + error.message);
-    }
-  };
-
-  // Función para renovar la cuenta del usuario
-  window.renovarUsuario = async function (userId, months) {
-    try {
-      const userRef = doc(db, 'users', userId);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        let currentExpiration = userData.expirationDate.toDate ? userData.expirationDate.toDate() : new Date(userData.expirationDate.seconds * 1000);
-        currentExpiration.setMonth(currentExpiration.getMonth() + months);
-        const newExpirationDate = currentExpiration;
-
-        await updateDoc(userRef, { expirationDate: newExpirationDate });
-
-        alert(`Usuario renovado exitosamente por ${months} mes(es).`);
-        listarUsuarios();
-      }
-    } catch (error) {
-      console.error("Error al renovar usuario: ", error);
-      alert("Error al renovar usuario: " + error.message);
-    }
-  };
-
-  // Buscar usuarios según el texto ingresado
-  document.getElementById('search-bar').addEventListener('input', listarUsuarios);
-
-  // Cerrar sesión del administrador
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    await signOut(auth);
-    location.reload();
-  });
+  // Resto del código...
 });
