@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Configuración de Firebase
@@ -107,37 +107,36 @@ async function listarUsuarios() {
   }
 }
 
-// Función para eliminar usuario
-window.eliminarUsuario = async function (userId) {
-  try {
-    await deleteDoc(doc(db, 'users', userId));
-    alert("Usuario eliminado exitosamente.");
-    listarUsuarios();
-  } catch (error) {
-    console.error("Error al eliminar usuario: ", error);
-    alert("Error al eliminar usuario: " + error.message);
-  }
-};
+// Función para editar usuario
+window.editarUsuario = async function (userId, currentUsername, currentEmail) {
+  const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
+  const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
+  const newPassword = prompt("Editar Contraseña (déjelo en blanco si no desea cambiarlo):");
 
-// Función para renovar la cuenta del usuario
-window.renovarUsuario = async function (userId, months) {
-  try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      let currentExpiration = userData.expirationDate.toDate ? userData.expirationDate.toDate() : new Date(userData.expirationDate.seconds * 1000);
-      currentExpiration.setMonth(currentExpiration.getMonth() + months);
-      const newExpirationDate = currentExpiration;
+  if (newUsername && newEmail) {
+    try {
+      // Actualizar datos del usuario en Firestore
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        username: newUsername,
+        email: newEmail,
+      });
 
-      await updateDoc(userRef, { expirationDate: newExpirationDate });
+      // Actualizar email y contraseña en Firebase Auth
+      const user = auth.currentUser;
+      if (user.email !== newEmail) {
+        await updateEmail(user, newEmail);
+      }
+      if (newPassword) {
+        await updatePassword(user, newPassword);
+      }
 
-      alert(`Usuario renovado exitosamente por ${months} mes(es).`);
+      alert("Usuario actualizado exitosamente.");
       listarUsuarios();
+    } catch (error) {
+      console.error("Error al actualizar usuario: ", error);
+      alert("Error al actualizar usuario: " + error.message);
     }
-  } catch (error) {
-    console.error("Error al renovar usuario: ", error);
-    alert("Error al renovar usuario: " + error.message);
   }
 };
 
