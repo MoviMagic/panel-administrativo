@@ -32,7 +32,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     currentAdminEmail = userCredential.user.email;
 
     document.getElementById('login-modal').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
+    document.getElementById('main-panel').style.display = 'block';
     document.getElementById('admin-email-display').innerText = `Administrador: ${currentAdminEmail}`;
     listarUsuarios();
   } catch (error) {
@@ -117,6 +117,18 @@ window.editarUsuario = async function (userId, currentUsername, currentEmail) {
       console.error("Error al actualizar usuario: ", error);
       alert("Error al actualizar usuario: " + error.message);
     }
+  }
+};
+
+// Función para eliminar usuarios
+window.eliminarUsuario = async function (userId) {
+  try {
+    await deleteDoc(doc(db, 'users', userId));
+    alert("Usuario eliminado exitosamente.");
+    listarUsuarios(); // Actualizar la lista de usuarios después de la eliminación
+  } catch (error) {
+    console.error("Error al eliminar usuario: ", error);
+    alert("Error al eliminar usuario: " + error.message);
   }
 };
 
