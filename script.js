@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Inicializar Firebase
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDhPRVu8n_pZQzJPVWNFlJonmj5KEYsF10",
   authDomain: "movimagic.firebaseapp.com",
@@ -14,15 +14,13 @@ const firebaseConfig = {
   measurementId: "G-GG65HJV2T6"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let currentAdminId = null;
-let currentAdminEmail = null;
-
-// Esperar hasta que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentAdminId = null;
+  let currentAdminEmail = null;
 
   // Manejar Login del Administrador
   document.getElementById('login-form').addEventListener('submit', async (e) => {
