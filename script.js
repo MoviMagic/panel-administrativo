@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const expirationDate = document.getElementById('expirationDate').value;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -53,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
       await setDoc(doc(db, 'users', userId), {
         username: username,
         email: email,
+        expirationDate: new Date(expirationDate),
+        adminId: currentAdminEmail,
       });
 
       document.getElementById('message').innerText = "Usuario creado exitosamente";
@@ -62,28 +65,98 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Función para listar los usuarios creados
+  // Función para listar los usuarios creados por el administrador actual
   async function listarUsuarios() {
     const usersContainer = document.getElementById('users-list');
     usersContainer.innerHTML = '';
 
     try {
-      const usersSnapshot = await getDocs(collection(db, 'users'));
+      const q = query(collection(db, 'users'), where("adminId", "==", currentAdminEmail));
+      const usersSnapshot = await getDocs(q);
+      const searchQuery = document.getElementById('search-bar').value.toLowerCase();
 
       usersSnapshot.forEach((doc) => {
         const userData = doc.data();
-        const userElement = document.createElement('div');
-        userElement.classList.add('user-item');
-        userElement.innerHTML = `
-          <p><strong>Nombre:</strong> ${userData.username}</p>
-          <p><strong>Email:</strong> ${userData.email}</p>
-        `;
-        usersContainer.appendChild(userElement);
+        if (userData.username.toLowerCase().includes(searchQuery) || userData.email.toLowerCase().includes(searchQuery)) {
+          const userElement = document.createElement('div');
+          userElement.classList.add('user-item');
+          userElement.innerHTML = `
+            <p><strong>Nombre:</strong> ${userData.username}</p>
+            <p><strong>Email:</strong> ${userData.email}</p>
+            <p><strong>Fecha de Expiración:</strong> ${new Date(userData.expirationDate.seconds * 1000).toLocaleDateString()}</p>
+            <div class="user-actions">
+              <button class="edit-btn" onclick="editarUsuario('${doc.id}', '${userData.username}', '${userData.email}')"><i class="fas fa-edit"></i> Editar</button>
+              <button class="delete-btn" onclick="eliminarUsuario('${doc.id}')"><i class="fas fa-trash"></i> Eliminar</button>
+              <button class="renew-btn" onclick="renovarUsuario('${doc.id}', 1)"><i class="fas fa-sync-alt"></i> Renovar 1 mes</button>
+            </div>
+          `;
+          usersContainer.appendChild(userElement);
+        }
       });
     } catch (error) {
       console.error("Error al listar usuarios: ", error);
     }
   }
+
+  // Función para editar usuario
+  window.editarUsuario = async function (userId, currentUsername, currentEmail) {
+    const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
+    const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
+
+    if (newUsername && newEmail) {
+      try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+          username: newUsername,
+          email: newEmail
+        });
+        alert("Usuario actualizado exitosamente.");
+        listarUsuarios();
+      } catch (error) {
+        console.error("Error al actualizar usuario: ", error);
+        alert("Error al actualizar usuario: " + error.message);
+      }
+    }
+  };
+
+  // Función para renovar la cuenta del usuario
+  window.renovarUsuario = async function (userId, months) {
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        let currentExpiration = userData.expirationDate.toDate ? userData.expirationDate.toDate() : new Date(userData.expirationDate.seconds * 1000);
+        currentExpiration.setMonth(currentExpiration.getMonth() + months);
+        const newExpirationDate = currentExpiration;
+
+        await updateDoc(userRef, { expirationDate: newExpirationDate });
+
+        alert(`Usuario renovado exitosamente por ${months} mes(es).`);
+        listarUsuarios();
+      }
+    } catch (error) {
+      console.error("Error al renovar usuario: ", error);
+      alert("Error al renovar usuario: " + error.message);
+    }
+  };
+
+  // Función para eliminar usuario
+  window.eliminarUsuario = async function (userId) {
+    if (confirm("¿Estás seguro de eliminar este usuario?")) {
+      try {
+        await deleteDoc(doc(db, 'users', userId));
+        alert("Usuario eliminado exitosamente.");
+        listarUsuarios();
+      } catch (error) {
+        console.error("Error al eliminar usuario: ", error);
+        alert("Error al eliminar usuario: " + error.message);
+      }
+    }
+  };
+
+  // Buscar usuarios según el texto ingresado
+  document.getElementById('search-bar').addEventListener('input', listarUsuarios);
 
   // Cerrar sesión del administrador
   document.getElementById('logout-btn').addEventListener('click', async () => {
