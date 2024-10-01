@@ -49,14 +49,16 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
   const expirationDate = document.getElementById('expirationDate').value;
 
   try {
+    // Crear usuario de autenticación con Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const userId = userCredential.user.uid;
 
+    // Crear el documento en Firestore
     await setDoc(doc(db, 'users', userId), {
       username: username,
       email: email,
-      expirationDate: Timestamp.fromDate(new Date(expirationDate)),
-      adminId: currentAdminId,
+      expirationDate: new Date(expirationDate),
+      adminId: currentAdminId, // Asegúrate de que el usuario que crea tiene permisos
     });
 
     document.getElementById('message').innerText = "Usuario creado exitosamente";
@@ -65,6 +67,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
     document.getElementById('message').innerText = "Error al crear usuario: " + error.message;
   }
 });
+
 
 // Función para listar los usuarios creados por el administrador actual
 async function listarUsuarios() {
