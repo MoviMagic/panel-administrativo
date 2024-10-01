@@ -88,7 +88,73 @@ button:hover {
   border-radius: 8px;
 }
 
+.user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .user-actions button {
   margin-right: 10px;
   background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  #admin-panel .admin-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-item {
+    padding: 10px;
+  }
+
+  .user-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  input, button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  h1, h2 {
+    font-size: 1.5rem;
+  }
+
+  .container {
+    width: 100%;
+    padding: 10px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .logout-button {
+    padding: 8px;
+  }
+
+  .user-item {
+    padding: 8px;
+  }
+
+  input, button {
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  button {
+    width: 100%;
+  }
 }
