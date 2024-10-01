@@ -63,6 +63,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
     await setDoc(doc(db, 'users', userId), {
       username: username,
       email: email,
+      password: password, // Almacenar la contraseña ingresada
       expirationDate: new Date(expirationDate),
       adminId: currentAdminId, // UID del administrador que crea el usuario
     });
@@ -77,7 +78,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
 // Función para listar los usuarios creados por el administrador actual
 async function listarUsuarios() {
   const usersContainer = document.getElementById('users-list');
-  usersContainer.innerHTML = ''; // Limpiar la lista antes de agregar nuevos elementos
+  usersContainer.innerHTML = '';
 
   try {
     const q = query(collection(db, 'users'), where("adminId", "==", currentAdminId));
@@ -86,16 +87,13 @@ async function listarUsuarios() {
 
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
-      if (
-        searchQuery === "" || 
-        userData.username.toLowerCase().includes(searchQuery) ||
-        userData.email.toLowerCase().includes(searchQuery)
-      ) {
+      if (userData.username.toLowerCase().includes(searchQuery) || userData.email.toLowerCase().includes(searchQuery)) {
         const userElement = document.createElement('div');
         userElement.classList.add('user-item');
         userElement.innerHTML = `
           <p><strong>Nombre:</strong> ${userData.username}</p>
           <p><strong>Email:</strong> ${userData.email}</p>
+          <p><strong>Contraseña:</strong> ${userData.password}</p> <!-- Mostrar la contraseña -->
           <p><strong>Fecha de Expiración:</strong> ${new Date(userData.expirationDate.seconds * 1000).toLocaleDateString()}</p>
           <div class="user-actions">
             <button class="edit-btn" onclick="editarUsuario('${doc.id}', '${userData.username}')"><i class="fas fa-edit"></i> Editar</button>
@@ -110,9 +108,6 @@ async function listarUsuarios() {
     console.error("Error al listar usuarios: ", error);
   }
 }
-
-// Agregar evento al buscador para actualizar la lista de usuarios
-document.getElementById('search-bar').addEventListener('input', listarUsuarios);
 
 // Función para editar solo el nombre de usuario
 window.editarUsuario = async function (userId, currentUsername) {
