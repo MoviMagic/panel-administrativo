@@ -77,7 +77,7 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
 // Función para listar los usuarios creados por el administrador actual
 async function listarUsuarios() {
   const usersContainer = document.getElementById('users-list');
-  usersContainer.innerHTML = '';
+  usersContainer.innerHTML = ''; // Limpiar la lista antes de agregar nuevos elementos
 
   try {
     const q = query(collection(db, 'users'), where("adminId", "==", currentAdminId));
@@ -86,7 +86,11 @@ async function listarUsuarios() {
 
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
-      if (userData.username.toLowerCase().includes(searchQuery) || userData.email.toLowerCase().includes(searchQuery)) {
+      if (
+        searchQuery === "" || 
+        userData.username.toLowerCase().includes(searchQuery) ||
+        userData.email.toLowerCase().includes(searchQuery)
+      ) {
         const userElement = document.createElement('div');
         userElement.classList.add('user-item');
         userElement.innerHTML = `
@@ -106,6 +110,9 @@ async function listarUsuarios() {
     console.error("Error al listar usuarios: ", error);
   }
 }
+
+// Agregar evento al buscador para actualizar la lista de usuarios
+document.getElementById('search-bar').addEventListener('input', listarUsuarios);
 
 // Función para editar solo el nombre de usuario
 window.editarUsuario = async function (userId, currentUsername) {
