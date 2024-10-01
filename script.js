@@ -112,30 +112,27 @@ window.editarUsuario = async function (userId, currentUsername) {
   const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
   const newPassword = prompt("Editar Contraseña (déjelo en blanco si no desea cambiarlo):");
 
-  if (newUsername) {
-    try {
-      // Actualizar nombre de usuario en Firestore
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, {
-        username: newUsername
-      });
+  try {
+    // Actualizar nombre de usuario en Firestore
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      username: newUsername || currentUsername,
+    });
 
-      // Si se proporciona una nueva contraseña, actualizarla en Firebase Auth
-      if (newPassword) {
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const email = userDoc.data().email;
-          await signInWithEmailAndPassword(auth, email, newPassword); // Re-autenticar antes de cambiar la contraseña
-          await updatePassword(auth.currentUser, newPassword);
-        }
+    // Si se proporciona una nueva contraseña, actualizarla en Firebase Auth
+    if (newPassword) {
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        // Actualizar la contraseña directamente si el administrador está autorizado
+        await auth.currentUser.updatePassword(newPassword);
       }
-
-      alert("Usuario actualizado exitosamente.");
-      listarUsuarios();
-    } catch (error) {
-      console.error("Error al actualizar usuario: ", error);
-      alert("Error al actualizar usuario: " + error.message);
     }
+
+    alert("Usuario actualizado exitosamente.");
+    listarUsuarios();
+  } catch (error) {
+    console.error("Error al actualizar usuario: ", error);
+    alert("Error al actualizar usuario: " + error.message);
   }
 };
 
