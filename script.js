@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Configuración de Firebase
@@ -94,7 +94,7 @@ async function listarUsuarios() {
           <p><strong>Email:</strong> ${userData.email}</p>
           <p><strong>Fecha de Expiración:</strong> ${new Date(userData.expirationDate.seconds * 1000).toLocaleDateString()}</p>
           <div class="user-actions">
-            <button class="edit-btn" onclick="editarUsuario('${doc.id}', '${userData.username}', '${userData.email}')"><i class="fas fa-edit"></i> Editar</button>
+            <button class="edit-btn" onclick="editarUsuario('${doc.id}', '${userData.username}')"><i class="fas fa-edit"></i> Editar</button>
             <button class="delete-btn" onclick="eliminarUsuario('${doc.id}')"><i class="fas fa-trash"></i> Eliminar</button>
             <button class="renew-btn" onclick="renovarUsuario('${doc.id}', 1)"><i class="fas fa-sync-alt"></i> Renovar 1 mes</button>
           </div>
@@ -107,28 +107,27 @@ async function listarUsuarios() {
   }
 }
 
-// Función para editar usuario
-window.editarUsuario = async function (userId, currentUsername, currentEmail) {
+// Función para editar usuario (solo nombre y contraseña)
+window.editarUsuario = async function (userId, currentUsername) {
   const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
-  const newEmail = prompt("Editar Correo Electrónico:", currentEmail);
   const newPassword = prompt("Editar Contraseña (déjelo en blanco si no desea cambiarlo):");
 
-  if (newUsername && newEmail) {
+  if (newUsername) {
     try {
-      // Actualizar datos del usuario en Firestore
+      // Actualizar nombre de usuario en Firestore
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
-        username: newUsername,
-        email: newEmail,
+        username: newUsername
       });
 
-      // Actualizar email y contraseña en Firebase Auth
-      const user = auth.currentUser;
-      if (user.email !== newEmail) {
-        await updateEmail(user, newEmail);
-      }
+      // Si se proporciona una nueva contraseña, actualizarla en Firebase Auth
       if (newPassword) {
-        await updatePassword(user, newPassword);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const email = userDoc.data().email;
+          await signInWithEmailAndPassword(auth, email, newPassword); // Re-autenticar antes de cambiar la contraseña
+          await updatePassword(auth.currentUser, newPassword);
+        }
       }
 
       alert("Usuario actualizado exitosamente.");
@@ -137,6 +136,40 @@ window.editarUsuario = async function (userId, currentUsername, currentEmail) {
       console.error("Error al actualizar usuario: ", error);
       alert("Error al actualizar usuario: " + error.message);
     }
+  }
+};
+
+// Función para eliminar usuario
+window.eliminarUsuario = async function (userId) {
+  try {
+    await deleteDoc(doc(db, 'users', userId));
+    alert("Usuario eliminado exitosamente.");
+    listarUsuarios();
+  } catch (error) {
+    console.error("Error al eliminar usuario: ", error);
+    alert("Error al eliminar usuario: " + error.message);
+  }
+};
+
+// Función para renovar la cuenta del usuario
+window.renovarUsuario = async function (userId, months) {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      let currentExpiration = userData.expirationDate.toDate ? userData.expirationDate.toDate() : new Date(userData.expirationDate.seconds * 1000);
+      currentExpiration.setMonth(currentExpiration.getMonth() + months);
+      const newExpirationDate = currentExpiration;
+
+      await updateDoc(userRef, { expirationDate: newExpirationDate });
+
+      alert(`Usuario renovado exitosamente por ${months} mes(es).`);
+      listarUsuarios();
+    }
+  } catch (error) {
+    console.error("Error al renovar usuario: ", error);
+    alert("Error al renovar usuario: " + error.message);
   }
 };
 
