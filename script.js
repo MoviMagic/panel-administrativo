@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDocs, collection, deleteDoc, updateDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Configuración de Firebase
@@ -107,32 +107,24 @@ async function listarUsuarios() {
   }
 }
 
-// Función para editar usuario (solo nombre y contraseña)
+// Función para editar solo el nombre de usuario
 window.editarUsuario = async function (userId, currentUsername) {
   const newUsername = prompt("Editar Nombre de Usuario:", currentUsername);
-  const newPassword = prompt("Editar Contraseña (déjelo en blanco si no desea cambiarlo):");
 
-  try {
-    // Actualizar nombre de usuario en Firestore
-    const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, {
-      username: newUsername || currentUsername,
-    });
+  if (newUsername && newUsername !== currentUsername) {
+    try {
+      // Actualizar solo el nombre de usuario en Firestore
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        username: newUsername,
+      });
 
-    // Si se proporciona una nueva contraseña, actualizarla en Firebase Auth
-    if (newPassword) {
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        // Actualizar la contraseña directamente si el administrador está autorizado
-        await auth.currentUser.updatePassword(newPassword);
-      }
+      alert("Nombre de usuario actualizado exitosamente.");
+      listarUsuarios();
+    } catch (error) {
+      console.error("Error al actualizar nombre de usuario: ", error);
+      alert("Error al actualizar nombre de usuario: " + error.message);
     }
-
-    alert("Usuario actualizado exitosamente.");
-    listarUsuarios();
-  } catch (error) {
-    console.error("Error al actualizar usuario: ", error);
-    alert("Error al actualizar usuario: " + error.message);
   }
 };
 
