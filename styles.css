@@ -1,7 +1,6 @@
-/* Estilo general inspirado en los colores de Disney+ */
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #0C0E1F; /* Fondo principal */
+  background-color: #141b29;
   margin: 0;
   padding: 0;
   display: flex;
@@ -15,18 +14,18 @@ body {
 
 .container {
   max-width: 800px;
-  width: 100%;
+  width: 90%;
   padding: 20px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-  background-color: #1F80E0; /* Fondo con color principal */
+  background-color: #0c1b33;
   border-radius: 12px;
   margin: 20px auto;
-  color: #FFFFFF; /* Texto en blanco */
 }
 
 h1, h2 {
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 form {
@@ -44,124 +43,27 @@ input, button {
 }
 
 input {
-  background-color: #0C0E1F; /* Fondo para inputs */
-  color: #FFFFFF;
-  border: 1px solid #1A73E8;
+  background-color: #f0f2f5;
+  border: 1px solid #ddd;
 }
 
 button {
-  background-color: #1A73E8; /* Botones con color vibrante */
-  color: #FFFFFF;
+  background-color: #007bff;
+  color: #fff;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #1F80E0;
+  background-color: #0056b3;
 }
 
-#message {
-  text-align: center;
-  color: #4CAF50;
-  margin-top: 15px;
-}
-
-/* Estilo de la lista de usuarios */
-#users-list {
-  margin-top: 30px;
-}
-
-.user-item {
-  background-color: #1A1C33;
-  border: 1px solid #1F80E0;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  color: #FFFFFF;
-}
-
-.user-item p {
-  margin: 0;
-}
-
-.user-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-  flex-wrap: wrap; /* Para permitir mejor ajuste en dispositivos pequeños */
-}
-
-.user-actions button {
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  flex: 1;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: #ffffff;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-  color: #ffffff;
-}
-
-.renew-btn {
-  background-color: #28a745;
-  color: #ffffff;
-}
-
-.delete-btn:hover {
-  background-color: #c82333;
-}
-
-.edit-btn:hover {
-  background-color: #e0a800;
-}
-
-.renew-btn:hover {
-  background-color: #218838;
-}
-
-.search-bar {
-  margin-bottom: 20px;
+#admin-panel .admin-info {
   display: flex;
   align-items: center;
-}
-
-.search-bar input {
-  flex: 1;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #1A73E8;
-  background-color: #0C0E1F;
-  color: #FFFFFF;
-}
-
-.admin-info {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
   justify-content: space-between;
-}
-
-.admin-info p {
-  margin: 0;
-  color: #FFFFFF;
-  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .logout-button {
@@ -178,59 +80,15 @@ button:hover {
   background-color: #c82333;
 }
 
-.logo {
-  max-width: 200px;
-  margin-bottom: 20px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.user-item {
+  background-color: #1f80e0;
+  color: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
 }
 
-/* Estilos responsivos para dispositivos móviles */
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-    margin: 10px;
-  }
-
-  .admin-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-
-  .search-bar {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .user-actions {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  input, button {
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-
-  .user-item {
-    padding: 15px;
-  }
-
-  .logo {
-    max-width: 150px;
-  }
-
-  .logout-button {
-    padding: 8px;
-  }
-
-  h1, h2 {
-    font-size: 1.5rem;
-  }
-
-  input, button {
-    font-size: 1rem;
-  }
+.user-actions button {
+  margin-right: 10px;
+  background-color: #0056b3;
 }

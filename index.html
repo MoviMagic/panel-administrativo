@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div class="container" id="main-panel" style="display:none;"> <!-- Cambio el id de admin-panel a main-panel -->
+  <div class="container" id="admin-panel" style="display:none;">
     <div class="admin-info">
       <p id="admin-email-display"></p>
       <button class="logout-button" id="logout-btn">Cerrar Sesión</button>
@@ -35,15 +35,11 @@
       <input type="text" id="username" placeholder="Nombre de Usuario" required>
       <input type="email" id="email" placeholder="Correo Electrónico" required>
       <input type="password" id="password" placeholder="Contraseña" required>
-      <input type="date" id="expirationDate" required>
       <button type="submit">Agregar Usuario</button>
     </form>
     <p id="message"></p>
 
     <h2>Lista de Usuarios</h2>
-    <div class="search-bar">
-      <input type="text" id="search-bar" placeholder="Buscar usuario...">
-    </div>
     <div id="users-list"></div>
   </div>
 
