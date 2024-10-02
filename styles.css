@@ -12,20 +12,25 @@ body {
   overflow-y: auto;
 }
 
-.container {
-  max-width: 800px;
+.login-container {
+  max-width: 400px;
   width: 90%;
   padding: 20px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
   background-color: #0c1b33;
   border-radius: 12px;
   margin: 20px auto;
+  text-align: center;
 }
 
-h1, h2 {
-  text-align: center;
+.login-container img.logo {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+h2 {
   color: #ffffff;
-  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 form {
@@ -57,6 +62,22 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.container {
+  max-width: 800px;
+  width: 90%;
+  padding: 20px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  background-color: #0c1b33;
+  border-radius: 12px;
+  margin: 20px auto;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 #admin-panel .admin-info {
@@ -100,7 +121,7 @@ button:hover {
 }
 
 @media (max-width: 768px) {
-  .container {
+  .container, .login-container {
     width: 95%;
     padding: 15px;
   }
@@ -134,7 +155,7 @@ button:hover {
     font-size: 1.5rem;
   }
 
-  .container {
+  .container, .login-container {
     width: 100%;
     padding: 10px;
     box-shadow: none;
